@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SiteOn</string>
+    <string name="passwordhint">password</string>
+    <string name="title_activity_driver_map">Map</string>
+    <string name="title_activity_customer_map">Map</string>
+    <string name="title_activity_mymap">Map</string>
+
 </resources>
