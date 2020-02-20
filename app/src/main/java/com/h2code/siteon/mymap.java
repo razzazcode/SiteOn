@@ -54,9 +54,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.compat.AutocompleteFilter;
-import com.google.android.libraries.places.compat.AutocompletePrediction;
-import com.google.android.libraries.places.compat.Places;
+
 import com.skyfishjy.library.RippleBackground;
 
 import java.util.ArrayList;
@@ -68,6 +66,11 @@ import java.util.logging.LogRecord;
 public class mymap extends FragmentActivity implements OnMapReadyCallback , ConnectionCallbacks, OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener, RoutingListener {
     int PERMISSION_ID = 44;
+
+
+
+
+
     FusedLocationProviderClient mFusedLocationClient;
     TextView latTextView, lonTextView;
 
@@ -82,58 +85,62 @@ public class mymap extends FragmentActivity implements OnMapReadyCallback , Conn
 
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_mymap);
 
 
+SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        .findFragmentById(R.id.map2);
+mapFragment.getMapAsync(this);
 
 
+latTextView = findViewById(R.id.latTextView);
+lonTextView = findViewById(R.id.lonTextView);
+mFusedLocationClient = LocationServices
+        .getFusedLocationProviderClient(this);
 
-
-
-
+getLastLocation();
+    }
 
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mymap);
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
 
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map2);
-        mapFragment.getMapAsync(this);
-
-
-        latTextView = findViewById(R.id.latTextView);
-        lonTextView = findViewById(R.id.lonTextView);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        getLastLocation();
     }
+
+
+
+
+
 
     @SuppressLint("MissingPermission")
     private void getLastLocation(){
         if (checkPermissions()) {
-            if (isLocationEnabled()) {
-                mFusedLocationClient.getLastLocation().addOnCompleteListener(
-                        new OnCompleteListener<Location>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Location> task) {
-                                Location location = task.getResult();
-                                if (location == null) {
-                                    requestNewLocationData();
-                                } else {
-                                    latTextView.setText(location.getLatitude()+"");
-                                    lonTextView.setText(location.getLongitude()+"");
-                                }
-                            }
-                        }
-                );
-            } else {
-                Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
+  if (isLocationEnabled()) {
+      mFusedLocationClient.getLastLocation().addOnCompleteListener(
+              new OnCompleteListener<Location>() {
+         @Override
+         public void onComplete(@NonNull Task<Location> task) {
+             Location location = task.getResult();
+             if (location == null) {
+                 requestNewLocationData();
+             } else {
+                 latTextView.setText(location.getLatitude()+"");
+                 lonTextView.setText(location.getLongitude()+"");
+             }
+         }
+              }
+      );
+  } else {
+      Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
+      Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+      startActivity(intent);
+  }
         } else {
             requestPermissions();
         }
@@ -208,17 +215,6 @@ public class mymap extends FragmentActivity implements OnMapReadyCallback , Conn
 
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        mMap.setMyLocationEnabled(true);
-    }
 
 
 
@@ -246,10 +242,10 @@ public class mymap extends FragmentActivity implements OnMapReadyCallback , Conn
     public void onConnected(@Nullable Bundle bundle) {
 
 
+        requestNewLocationData();
 
 
-
-        LocationRequest mLocationRequest = new LocationRequest();
+   /*     LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
@@ -260,14 +256,7 @@ public class mymap extends FragmentActivity implements OnMapReadyCallback , Conn
                 mLocationRequest, mLocationCallback,
                 Looper.myLooper()
         );
-
-
-
-
-
-
-
-
+*/
 
     }
 
